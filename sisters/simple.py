@@ -2,9 +2,9 @@ import sys, glob, os
 import numpy as np
 
 from emcee import EnsembleSampler
-from scipy.stats import norm as gaussian
+from scipy.stats import norm, genlogistic, logistic, genhalflogistic
 
-#gaussian = norm()
+gaussian = norm
 
 
 class Parameter(object):
@@ -162,7 +162,9 @@ class GaussianPriorND(ParameterSet):
         return draws
 
 
-def lnpostfn(theta, samples=[]):
+def lnpostfn(theta, samples=[], model=None):
+    if model is None:
+        model = model
     print(theta)
     lnp = np.sum([np.log(model.likelihood(theta, s)) for s in samples])
     lnp += -np.log(theta[1])
@@ -173,7 +175,8 @@ def lnpostfn(theta, samples=[]):
 
 
 def mock_samples(s, N, precision=10, **extras):
-    """For a given set of stellar parameters and 
+    """For a given set of stellar parameters and precision, mock up samples
+    from a gaussian.
     """
     dims = s.dtype.names
     dt = np.dtype([(d, np.float) for d in dims])
@@ -181,7 +184,25 @@ def mock_samples(s, N, precision=10, **extras):
     for d in dims:
         chain[d] = gaussian.rvs(loc=s[d], scale=s[d] / precision, size=N)
     return chain
+
     
+def mock_samples_sigmoid(s, N, maxv={'age':13.7, 'feh':0.5, 'distance': 100},
+                         upper=False, scale=1.0, **extras):
+    """For a given set of stellar parameters and precision, mock up samples
+    from a logistic function.
+    """
+    dims = s.dtype.names
+    dt = np.dtype([(d, np.float) for d in dims])
+    chain = np.zeros(N, dtype=dt)
+    
+    for d in dims:
+        loc = np.random.uniform(0, s[d])
+        #if upper:
+        #    loc = np.random.uniform(0, s[d])
+        #else:
+        #    loc = np.random.uniform(s[d], maxv[d])            
+    return chain
+
 
 def simulate(model, Nstar, Nsample, **extras):
     """Simulate a set of true values from the distribution

@@ -15,7 +15,8 @@ def plot_stars(stars, param='age', thin=5):
 
 
 def plot_chain(chain):
-
+    """
+    """
     fig, axes = pl.subplots(1, 2)
     nw, ni, nd = chain.shape
     for j, ax in enumerate(axes.flat):
@@ -23,3 +24,13 @@ def plot_chain(chain):
             ax.plot(chain[i, :, j])
 
     return fig, axes
+
+
+def plot_star_chain(star_chains):
+    fig, ax = pl.subplots(2, 2)
+    for i, s in enumerate(star_chains):
+        ax.flat[i % 4].hist(s['age'], histtype='step',
+                            alpha =0.5, label='{}'.format(i))
+
+    [a.legend(loc=0, prop={'size': 8}) for a in ax.flat]
+    return fig, ax
