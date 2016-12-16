@@ -1,7 +1,7 @@
 import sys, os, glob
 import numpy as np
 
-from simple import GaussianPriorND, lnpostfn
+from model import GaussianPriorND, lnpostfn
 from mio import load_stars
 
 from emcee import EnsembleSampler
@@ -16,7 +16,7 @@ rp = {'precision': 10.0,
       'niter': 256,
       'nout': 2000}
 
-files = glob.glob('../data/hyades/*_SP.dat')
+files = glob.glob('../data/hyades/*_NSP.dat') #NSP = No spectral info, SP= with Spectral info
 star_chains = load_stars(files, **rp)
 
 postkwargs = {'samples': star_chains,
