@@ -4,7 +4,8 @@ import numpy as np
 from scipy.stats import norm
 gaussian = norm
 
-from parameters import ParameterSet
+from parameters import Parameter, ParameterSet
+
 
 class GaussianPriorND(ParameterSet):
 
@@ -50,14 +51,19 @@ class GaussianPriorND(ParameterSet):
 
 
 def lnpostfn(theta, samples=[], model=None):
+    """A simple posterior probability function that sums the log-likelihood of
+    each chain given the hyper-parameters theta, and applies any hyper-priors
+    to these hyper-parameters.
+    """
     if model is None:
         model = model
     print(theta)
+    # sum the log-likelihoods of each chain
     lnp = np.sum([np.log(model.likelihood(theta, s)) for s in samples])
+    # prior on scale parameter
     lnp += -np.log(theta[1])
     if np.any(theta < 1e-8) or (np.isfinite(lnp) is False):
         return -np.inf
     else:
         return lnp
-
 

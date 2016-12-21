@@ -4,6 +4,7 @@ import numpy as np
 from scipy.stats import norm
 gaussian = norm
 
+__all__ = ["Parameter", "ParameterSet"]
 
 class Parameter(object):
     """Basically wraps a value with some methods that are useful for parameters,

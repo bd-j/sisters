@@ -4,7 +4,7 @@ import numpy as np
 from scipy.stats import norm, genlogistic, logistic, genhalflogistic
 gaussian = norm
 
-from simple import GaussianPriorND, lnpostfn
+from model import GaussianPriorND, lnpostfn
 from emcee import EnsembleSampler
 
 
