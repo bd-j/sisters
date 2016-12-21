@@ -6,15 +6,15 @@ gaussian = norm
 
 __all__ = ["Parameter", "ParameterSet"]
 
+
 class Parameter(object):
     """Basically wraps a value with some methods that are useful for parameters,
     especially an associated Free/Fixed property.
     """
-    
     name = 'template'
     _value = 0.0
     free = True
-    
+
     def __init__(self, name, initial=0.0, free=None):
         self.name = name
         self.value = initial
@@ -44,9 +44,8 @@ class Parameter(object):
 class ParameterSet(Parameter):
     """Container for a set of parameters.
     """
+    name = 'Test'
 
-    name='Test'
-    
     def __init__(self, paramlist=[], name='Test'):
         self.params = paramlist
         self.name = name
@@ -62,7 +61,7 @@ class ParameterSet(Parameter):
 
     def remove(self, pname):
         pass
-        
+
     def update(self, **params):
         """Update named parameters based on supplied keyword arguments.
         Needs to be fast.
@@ -107,13 +106,10 @@ class ParameterSet(Parameter):
     def parnames(self):
         return [p.name for p in self.params]
 
-
     @property
     def npar(self):
         return len(self.free_params)
-    
+
     @property
     def ndim(self):
         return len(self.value)
-
-

@@ -11,8 +11,9 @@ def read_minesweeper(filename, nout=None, **extras):
     with open(filename, 'r') as f:
         # drop the comment hash and mags field
         header = f.readline().split()
+    dt = np.dtype([(n.lower(), np.float) for n in header])
     data = np.genfromtxt(filename, comments='#', skip_header=1,
-                         dtype=np.dtype([(n.lower(), np.float) for n in header]))
+                         dtype=dt)
 
     # Evidence based correction
     p = np.exp(data['logwt'] - data['logz'][-1])
@@ -22,4 +23,3 @@ def read_minesweeper(filename, nout=None, **extras):
 
 def load_stars(files, nout=None, **extras):
     return [read_minesweeper(f, nout=nout) for f in files]
-

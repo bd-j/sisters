@@ -1,8 +1,7 @@
 import sys, glob, os
 import numpy as np
 
-from scipy.stats import norm
-gaussian = norm
+from scipy.stats import norm as gaussian
 
 from parameters import Parameter, ParameterSet
 
@@ -18,12 +17,12 @@ class GaussianPriorND(ParameterSet):
         for d in self.dimensions:
             self.params += [Parameter('{}_mean'.format(d)),
                             Parameter('{}_sigma'.format(d))]
-        
+
     def likelihood(self, theta, samples):
-        #print(theta)
+        # print(theta)
         self.value = theta
         return np.sum(self.__call__(samples))
-         
+
     def __call__(self, samples):
         """A slow way to call a multivariate normal.  But points the way to
         evaluating more complicated joint (or separable) priors.
@@ -36,7 +35,7 @@ class GaussianPriorND(ParameterSet):
                 like *= l
             except(NameError):
                 like = l
-                
+
         return like
 
     def draw(self, N):
@@ -58,12 +57,11 @@ def lnpostfn(theta, samples=[], model=None):
     if model is None:
         model = model
     print(theta)
-    # sum the log-likelihoods of each chain
+    # Sum the log-likelihoods of each chain.
     lnp = np.sum([np.log(model.likelihood(theta, s)) for s in samples])
-    # prior on scale parameter
+    # Prior on scale hyper-parameter.
     lnp += -np.log(theta[1])
     if np.any(theta < 1e-8) or (np.isfinite(lnp) is False):
         return -np.inf
     else:
         return lnp
-
