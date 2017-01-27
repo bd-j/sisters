@@ -8,15 +8,15 @@ from parameters import Parameter, ParameterSet
 
 class GaussianPriorND(ParameterSet):
 
-    params = []
+    #params = []
 
     def __init__(self, dimensions=['age', 'distance', 'feh'], name='Cluster'):
         self.name = name
-        self.params = []
+        self._paramlist = []
         self.dimensions = dimensions
         for d in self.dimensions:
-            self.params += [Parameter('{}_mean'.format(d)),
-                            Parameter('{}_sigma'.format(d))]
+            self._paramlist += [Parameter('{}_mean'.format(d)),
+                                Parameter('{}_sigma'.format(d))]
 
     def likelihood(self, theta, samples):
         # print(theta)
@@ -60,7 +60,7 @@ def lnpostfn(theta, samples=[], model=None):
     # Sum the log-likelihoods of each chain.
     lnp = np.sum([np.log(model.likelihood(theta, s)) for s in samples])
     # Prior on scale hyper-parameter.
-    lnp += -np.log(theta[1])
+    lnp += -np.log(model['age_sigma']) - np.log(model['distance_sigma'])
     if np.any(theta < 1e-8) or (np.isfinite(lnp) is False):
         return -np.inf
     else:

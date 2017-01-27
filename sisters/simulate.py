@@ -51,11 +51,12 @@ def simulate(model, Nstar, Nsample, **extras):
 if __name__ == "__main__":
 
     rp = {'precision': 10.0,
-          'nwalkers': 128,
+          'nwalkers': 64,
           'niter': 256}
 
-    model = GaussianPriorND(dimensions=['age'])
-    model.value = [0.2, 0.001]
+    model = GaussianPriorND(dimensions=['age', 'distance'])
+    model.update(age_mean=0.2, age_sigma=0.001,
+                 distance_mean=400, distance_sigma=10)
     model.initial_value = model.value.copy()
 
     Nstar = 50
@@ -66,7 +67,7 @@ if __name__ == "__main__":
     esampler = EnsembleSampler(rp['nwalkers'], model.ndim, lnpostfn,
                                kwargs=postkwargs)
 
-    initial = [0.1, 0.01]
+    initial = [0.1, 0.01, 500, 100]
     initial = [np.random.normal(loc=i, scale=0.1 * i, size=(rp['nwalkers']))
                for i in initial]
     initial = np.array(initial).T

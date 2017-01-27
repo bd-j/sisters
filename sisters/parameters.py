@@ -40,6 +40,13 @@ class Parameter(object):
         if not self.free:
             print("Warning: setting fixed parameter {}".format(self.name))
 
+    @property
+    def prior_prob(self):
+        try:
+            return self.prior(self.value, **self.prior_kwargs)
+        except(AttributeError):
+            return 1.0
+
 
 class ParameterSet(Parameter):
     """Container for a set of parameters.
@@ -47,17 +54,22 @@ class ParameterSet(Parameter):
     name = 'Test'
 
     def __init__(self, paramlist=[], name='Test'):
-        self.params = paramlist
+        self._paramlist = paramlist
+        #self.params = dict(zip(self.parnames, paramlist)
         self.name = name
+
+    @property
+    def params(self):
+        return dict([(p.name, p) for p in self._paramlist])
 
     def __repr__(self):
         return '{}({})'.format(self.__class__, self.name)
 
     def make_fixed(self, pname):
-        self.params[self.parnames.index(pname)].free = False
+        self.params[pname].free = False
 
     def make_free(self, pname):
-        self.params[self.parnames.index(pname)].free = True
+        self.params[pname].free = True
 
     def remove(self, pname):
         pass
@@ -66,12 +78,15 @@ class ParameterSet(Parameter):
         """Update named parameters based on supplied keyword arguments.
         Needs to be fast.
         """
-        tpnames = self.parnames
+        #tpnames = self.parnames
         for p, v in params.items():
-            self.params[tpnames.index(p)].value = v
+            self.params[p].value = v
 
     def __getitem__(self, k):
-        return self.params[self.parnames.index(k)].value
+        return self.params[k].value
+
+    def __setitem__(self, k, v):
+        self.params[k].value = v
 
     @property
     def value(self):
@@ -94,7 +109,7 @@ class ParameterSet(Parameter):
     def free_params(self):
         """A list of just the free parameters.
         """
-        return [p for p in self.params if p.free]
+        return [p for p in self._paramlist if p.free]
 
     @property
     def theta_names(self):
@@ -104,7 +119,7 @@ class ParameterSet(Parameter):
 
     @property
     def parnames(self):
-        return [p.name for p in self.params]
+        return [p.name for p in self._paramlist]
 
     @property
     def npar(self):
