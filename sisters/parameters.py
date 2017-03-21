@@ -13,14 +13,15 @@ class Parameter(object):
     """
     name = 'template'
     _value = 0.0
-    free = True
 
-    def __init__(self, name, initial=0.0, free=None):
+    def __init__(self, name, initial=0.0, prior=None, free=True):
         self.name = name
-        self.value = initial
-        if free is not None:
-            self.free = free
+        self.free = free
+        if prior is not None:
+            self._prior = prior
 
+        self.value = initial
+            
     def __repr__(self):
         return '{}({})'.format(self.__class__, self.name)
 
@@ -41,9 +42,12 @@ class Parameter(object):
             print("Warning: setting fixed parameter {}".format(self.name))
 
     @property
-    def prior_prob(self):
+    def pardict(self):
+        return dict([(self.name, self.value)])
+
+    def prior_prob(self, **kwargs):
         try:
-            return self.prior(self.value, **self.prior_kwargs)
+            return self._prior(value=self.value, **kwargs)
         except(AttributeError):
             return 1.0
 
@@ -107,7 +111,7 @@ class ParameterSet(Parameter):
 
     @property
     def free_params(self):
-        """A list of just the free parameters.
+        """A list of just the free parameters (as objects).
         """
         return [p for p in self._paramlist if p.free]
 
@@ -128,3 +132,9 @@ class ParameterSet(Parameter):
     @property
     def ndim(self):
         return len(self.value)
+
+    @property
+    def pardict(self):
+        d = {}
+        [d.update(p.pardict) for p in self.params]
+        return d

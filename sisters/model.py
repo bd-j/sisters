@@ -19,6 +19,20 @@ class GaussianPriorND(ParameterSet):
                                 Parameter('{}_sigma'.format(d))]
 
     def likelihood(self, theta, samples):
+        """Calculate likelihood for a single chain (given by `samples`) at the
+        value of the hyperparameters given by `theta`.  This is accomplished by
+        summing the probabilities of each postion in the chain, given the
+        hyperparameters `theta`.
+
+        :param theta:
+            The value of the hyperparameters.  Should be same length as
+            `free_params`.
+
+        :param samples:
+            A dictionary or structured array giving the chain.  The keys (or
+            field names) should include the contents of self.dimensions
+
+        """
         # print(theta)
         self.value = theta
         return np.sum(self.__call__(samples))
@@ -60,7 +74,7 @@ def lnpostfn(theta, samples=[], model=None):
     # Sum the log-likelihoods of each chain.
     lnp = np.sum([np.log(model.likelihood(theta, s)) for s in samples])
     # Prior on scale hyper-parameter.
-    lnp += -np.log(model['age_sigma']) - np.log(model['distance_sigma'])
+    lnp += -np.log(model['age_sigma']) - np.log(model['dist_sigma'])
     if np.any(theta < 1e-8) or (np.isfinite(lnp) is False):
         return -np.inf
     else:
