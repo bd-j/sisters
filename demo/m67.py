@@ -1,8 +1,8 @@
 import sys, os, glob
 import numpy as np
 
-from model import GaussianPriorND, lnpostfn
-from mio import load_stars
+from sisters.model import GaussianPriorND, lnpostfn
+from sisters.io import load_stars
 
 from emcee import EnsembleSampler
 
@@ -10,8 +10,8 @@ from emcee import EnsembleSampler
 model = GaussianPriorND(dimensions=['age', 'dist'])
 
 # parameters to use for emcee
-rp = {'nwalkers': 128,
-      'niter': 256,
+rp = {'nwalkers': 64,
+      'niter': 128,
       'nout': 2000, # number of samples to draw from the minesweeper chains
       }
 
@@ -41,7 +41,8 @@ for i, result in enumerate(esampler.sample(initial, iterations=rp['niter'],
             print(i)
 
 
-# Write out some statistics from the last half of the chains, and plot the walker evolution
+# Write out some statistics from the last half of the chains, and plot the
+# walker evolution
 import matplotlib.pyplot as pl
 for (n, c) in zip(model.theta_names, esampler.chain.T):
     print('{}: mean={}, rms={}'.format(n, c[128:, :].mean(), c[128:, :].std()))

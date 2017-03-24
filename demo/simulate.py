@@ -3,7 +3,7 @@ import numpy as np
 
 from scipy.stats import norm, genlogistic, logistic, genhalflogistic
 
-from model import GaussianPriorND, lnpostfn
+from sisters.model import GaussianPriorND, lnpostfn
 from emcee import EnsembleSampler
 
 gaussian = norm
@@ -21,8 +21,9 @@ def mock_samples(s, N, precision=10, **extras):
     return chain
 
 
-def mock_samples_sigmoid(s, N, maxv={'age': 13.7, 'feh': 0.5, 'distance': 100},
-                         upper=False, scale=1.0, **extras):
+def mock_samples_sigmoid(s, N, upper=False, scale=1.0,
+                         maxv={'age': 13.7, 'feh': 0.5, 'distance': 100},
+                         **extras):
     """For a given set of stellar parameters and precision, mock up samples
     from a logistic function.
     """
@@ -72,7 +73,8 @@ if __name__ == "__main__":
                for i in initial]
     initial = np.array(initial).T
 
-    for i, result in enumerate(esampler.sample(initial, iterations=rp['niter'],
+    for i, result in enumerate(esampler.sample(initial,
+                                               iterations=rp['niter'],
                                                storechain=True)):
 
             if (i % 10) == 0:

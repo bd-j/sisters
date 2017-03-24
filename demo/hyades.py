@@ -1,8 +1,8 @@
 import sys, os, glob
 import numpy as np
 
-from model import GaussianPriorND, lnpostfn
-from mio import load_stars
+from sisters.model import GaussianPriorND, lnpostfn
+from sisters.io import load_stars
 
 from emcee import EnsembleSampler
 
@@ -12,8 +12,8 @@ rp = {'nwalkers': 128,
       'niter': 256,
       'nout': 2000, # number of samples to draw from the minesweeper chains
       }
-
-files = glob.glob('../data/hyades/*_NSP.dat') #NSP = No spectral info, SP= with Spectral info
+#NSP = No spectral info, SP= with Spectral info
+files = glob.glob('../data/hyades/*_NSP.dat') 
 star_chains = load_stars(files, **rp)
 
 postkwargs = {'samples': star_chains,

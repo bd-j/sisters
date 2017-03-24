@@ -3,7 +3,7 @@ import numpy as np
 
 from scipy.stats import norm as gaussian
 
-from parameters import Parameter, ParameterSet
+from .parameters import Parameter, ParameterSet
 
 
 class GaussianPriorND(ParameterSet):

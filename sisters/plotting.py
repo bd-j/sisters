@@ -22,7 +22,6 @@ def plot_chain(chain):
     for j, ax in enumerate(axes.flat):
         for i in range(nw):
             ax.plot(chain[i, :, j])
-
     return fig, axes
 
 
@@ -76,11 +75,13 @@ def subtriangle(chain, parnames, outname=None, showpars=None,
     if trim_outliers is not None:
         trim_outliers = len(parnames) * [trim_outliers]
     try:
-        fig = triangle.corner(flatchain, labels=parnames, truths=truths,  verbose=False,
-                              quantiles=[0.16, 0.5, 0.84], extents=trim_outliers, **kwargs)
+        fig = triangle.corner(flatchain, labels=parnames, truths=truths,
+                              verbose=False, extents=trim_outliers,
+                              quantiles=[0.16, 0.5, 0.84], **kwargs)
     except:
-        fig = triangle.corner(flatchain, labels=parnames, truths=truths,  verbose=False,
-                              quantiles=[0.16, 0.5, 0.84], range=trim_outliers, **kwargs)
+        fig = triangle.corner(flatchain, labels=parnames, truths=truths,
+                              verbose=False, range=trim_outliers,
+                              quantiles=[0.16, 0.5, 0.84], **kwargs)
 
     if outname is not None:
         fig.savefig('{0}.triangle.png'.format(outname))
