@@ -43,19 +43,23 @@ for i, result in enumerate(esampler.sample(initial, iterations=rp['niter'],
 
 # Write out some statistics from the last half of the chains, and plot the
 # walker evolution
+half = max(rp['niter'] / 2, 100)
 import matplotlib.pyplot as pl
 for (n, c) in zip(model.theta_names, esampler.chain.T):
-    print('{}: mean={}, rms={}'.format(n, c[128:, :].mean(), c[128:, :].std()))
+    print('{}: mean={}, rms={}'.format(n, c[half:, :].mean(), c[half:, :].std()))
     fig, ax = pl.subplots()
     for i in range(rp['nwalkers']):
         ax.plot(c[:, i])
     ax.set_ylabel(n)
     ax.set_xlabel('MCMC iteration')
-
+    ax.axvline(half, linestyle=':', color='k')
     
-# Make a corner plot (note this includes burnin)
+# Make a corner plot (removing some burnin)
+outsize = rp['nwalkers'] * (rp['niter'] - half)
 try:
     import corner
-    fig = corner.corner(esampler.flatchain)
+    fig = corner.corner(esampler.chain[:, half:, :].reshape(outsize, esampler.dim))
 except:
     pass
+
+pl.show()
