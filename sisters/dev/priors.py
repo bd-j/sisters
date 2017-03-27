@@ -21,8 +21,11 @@ class Prior(object):
         self.argnames = argnames
 
         self.name = name
+        self.update(**kwargs)
 
     def update(self, **kwargs):
+        """
+        """
         for k in self.prior_params:
             self.params[k] = kwargs[self.alias[k]]
         
@@ -50,13 +53,15 @@ class GaussianPrior(Prior):
 class PowerLawPrior(Prior):
 
     argnames = ['value']
-    prior_params = ['slope', 'loc', 'scale'] # need this to be 'min', 'max' instead of scale, loc
+    prior_params = ['slope', 'min', 'max']
     distribution = scipy.stats.powerlaw
 
     def evaluate(self, **extras):
         slope = self.params.pop('slope')
-        return self.distribution.pdf(self.x, slope, **self.params)
-    
+        loc = self.params.pop('min')
+        scale = self.params.pop('max') - loc
+        return self.distribution.pdf(self.x, slope, loc=loc, scale=scale)
+
 
 class UniformPrior(Prior):
 

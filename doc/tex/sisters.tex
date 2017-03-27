@@ -1,0 +1,76 @@
+\documentclass[manuscript, letterpaper]{aastex6}
+\bibliographystyle{aasjournal}
+
+\usepackage{graphicx}
+\usepackage[suffix=]{epstopdf}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{xspace}
+
+\newcommand{\given}
+\newcommand{\like}{\mathcal{L}}
+ 
+\begin{document}
+\author{B. Johnson}
+
+%\begin{center}
+%\today
+%\end{center}
+
+\section{Introduction}
+
+\section{Model}
+We seek to infer the parameters of a model for the age, distance, etc. distribution of stars in a cluster, using samples of the posterior distr for the individual stars.
+
+We are going to think of the cluster as imposing a new prior on the parameters of the all the stars, 
+e.g. that the ages, distances, and metallicities of all the stars be similar.
+We do this via pseudo-importance sampling of heirarchical Bayesian model.
+We are going to marginalize out the individual stellar parameters $\theta$.
+In brief, the likelihood can be written
+
+\begin{eqnarray}
+p_i(d_i \given \phi) & = & \int d\theta \, \like(d_i | \theta) \, p(\theta \given \phi) \\
+ & \approx & \sum_j p(\hat{\theta}_{i,j} \given \phi) / g(\hat{\theta_{i,j}})
+\end{eqnarray}
+where $d_i$ are the data for star $i$,
+$\phi$ are the hyperparameters describing the cluster or ensemble of stars,
+$\theta$ are the parameters for the individual star,
+$\hat{theta}$ are the provided samples from the posterior PDF $p(\theta \given d_i)$,
+and $g(\theta)$ is the prior used when obtaining the samples $\hat{theta}$.
+Note that the second line has replaced the integral with a sum over the values of the prior at the the samples.
+This is the approximate numerical integration enabled by MCMC chains.
+If there is any (even an implicit) prior $g(\theta)$ that was used in the inference of the individual stellar parameters, 
+that prior is inherited by the cluster model unless explicitly divided out as above.
+
+Because division by zero is not allowed, it is impossible to remove a prior which goes to zero at any part of the parameter space.
+It is also impossible to do the numeric integral over places where the chains $\theta_i$ provide no support.
+
+To combine the constraints from all the individual stars we simply take the product of the probabilities of each star under the new prior, and muliply by the hyperprior $p(\phi)$
+\begin{eqnarray}
+p(\phi \given D) & \propto & p(\phi) \, \prod_i p_i(d_i \given \phi)
+\end{eqnarray}
+where $D \equiv {d_i}$ is the set of observations of all stars
+
+\section{Simple Case}
+In the simplest case the parameters $\phi$ might describe (narrow) gaussians in age, distance, and metallicity.
+
+\section{Binaries}
+
+\section{IMF}
+
+\section{Outliers: Non-members and Wierd Stars}
+
+\begin{eqnarray}
+p_i(d_i \given \phi) & = & p_{mem} \, \sum_j p(\hat{\theta}_{i,j} \given \phi) + (1-p_{mem}) \, \sum_j p(\hat{\theta}_{i,j} \given \beta)\\
+\end{eqnarray}
+where $p_{mem}$ is a cluster membership probability that goes from 0 to 1,
+and $\beta$ are parameters that describe the distribution of stellar properties of the non-members or background population.
+
+The $p_{mem}$ may either be a known number for all stars, which has been inferred from other data, or an unkown number that is to be inferred from the ensmeble itself.
+
+
+\section{Shrinkage}
+The newly inferred priors can be used to obtain better constraints on the parameters of the individual stars.
+
+\end{document}

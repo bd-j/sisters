@@ -4,7 +4,7 @@ from sisters.parameters import Parameter, ParameterSet
 
 class Likelihood(ParameterSet):
 
-    def sample_lnp(self, chain):
+    def lnp_samples(self, chain):
         """Get the log-prior-probability for samples from the chain.  This is given
         by the prior probability for the nominally fixed parameters that part
         of the chain.
@@ -34,8 +34,8 @@ class Likelihood(ParameterSet):
                       for par in self.free_params])
         return lnp
         
-    def lnp_of_samples(self, chain):
-        return self.lnp_prior + self.sample_lnp(chain)
+    #def lnp_of_samples(self, chain):
+    #    return self.lnp_prior + self.sample_lnp(chain)
 
     def integrate_chain(self, chain):
         lnprob_chain = np.logaddexp(self.lnp_of_samples(chain))
@@ -47,6 +47,8 @@ class Likelihood(ParameterSet):
             lnp_chain = self.integrate_chain(chain)
             lnp += lnp_chain
 
+        return lnp_chain
+
 
 if __name__ == "__main__":
 
@@ -54,7 +56,7 @@ if __name__ == "__main__":
     for par in ['age', 'dist']:
         mname, sname = 'mu_{}'.format(par), 'sigma_{}'.format(par)
         sample = Parameter(par, prior=GaussianPrior([mname, sname]), free=False)
-        mu = Parameter(mname, prior=UniformPrior(min=0, max=13.7))
+        mu = Parameter(mname, prior=UniformPrior())
         sigma = Parameter(sname, prior=LogarithmicPrior())
 
         parlist += [sample, mu, sigma]
