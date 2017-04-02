@@ -53,7 +53,7 @@ class Parameter(object):
 
 
 class ParameterSet(Parameter):
-    """Container for a set of parameters.
+    """Container for a set of parameters.  Try to be recursive.
     """
     name = 'Test'
 
@@ -61,6 +61,11 @@ class ParameterSet(Parameter):
         self._paramlist = paramlist
         #self.params = dict(zip(self.parnames, paramlist)
         self.name = name
+
+    @property
+    def free(self):
+        f = [p.free for p in self._paramlist]
+        return True in f
 
     @property
     def params(self):

@@ -10,7 +10,9 @@
 
 \newcommand{\given}
 \newcommand{\like}{\mathcal{L}}
- 
+\newcommand{\transpose}[1]{{#1}^{\!\mathsf T}}
+\renewcommand{\det}[1]{||{#1}||}
+
 \begin{document}
 \author{B. Johnson}
 
@@ -18,7 +20,29 @@
 %\today
 %\end{center}
 
+\begin{abstract}
+Inference of cluster properties (age, metallicity, distance) is often
+ accomplished by fitting isochrones to the color-magnitude diagram of member
+ stars.
+It can also be though of as type of heirarchical inference, where the age,
+ metallicity, and age distributions of the cluster form priors for the
+ individual strellar properties, and we wish to infer the parameters (e.g. mean,
+ dispersion) of these priors from the properties of the stars themselves.
+If the properties of the individual stars are represented as independent samples from the
+ probability distributions for stellar parameters, obtained with known
+ analytic priors, then this can be accomplished through pseudo importance
+ weighted resampling of these chains.
+We describe this technique here and present a demonstration of application to
+  stars in the Hyades.
+This technique has the ability to incorporate heterogenous information about
+  individual stars.
+It also is flexible enough to be extended to complex hyper-prior distributions
+  that include multivariate dependencies.
+\end{abstract}
+
+
 \section{Introduction}
+Discuss \match, \base9, \tausq 
 
 \section{Model}
 We seek to infer the parameters of a model for the age, distance, etc. distribution of stars in a cluster, using samples of the posterior distr for the individual stars.
@@ -61,13 +85,23 @@ In the simplest case the parameters $\phi$ might describe (narrow) gaussians in 
 
 \section{Outliers: Non-members and Wierd Stars}
 
+We can use a standard mixture model. 
+Here we replace the individual star probability with the following
 \begin{eqnarray}
 p_i(d_i \given \phi) & = & p_{mem} \, \sum_j p(\hat{\theta}_{i,j} \given \phi) + (1-p_{mem}) \, \sum_j p(\hat{\theta}_{i,j} \given \beta)\\
 \end{eqnarray}
 where $p_{mem}$ is a cluster membership probability that goes from 0 to 1,
 and $\beta$ are parameters that describe the distribution of stellar properties of the non-members or background population.
+All else stays the same
 
-The $p_{mem}$ may either be a known number for all stars, which has been inferred from other data, or an unkown number that is to be inferred from the ensmeble itself.
+The $p_{mem}$ may either be a known number for all stars, which has been
+inferred from other data, or an unkown number that is to be inferred from the ensemble itself.  
+In the latter case the $p_{mem}$ of an individual star can be constructed from the posteriors.
+For a posterior sample $k$ of the parameters $\phi, \beta$ the posterior odds ratio that the star $i$ is a member is
+\begin{eqnarray}
+p_{mem, i, k}(d_i \given \phi) & = & \frac{p_{mem, k} \, \sum_j p(\hat{\theta}_{i,j} \given \phi_k)}{(1-p_{mem, k}) \, \sum_j p(\hat{\theta}_{i,j} \given \beta_k)}\\
+\end{eqnarray}
+
 
 
 \section{Shrinkage}

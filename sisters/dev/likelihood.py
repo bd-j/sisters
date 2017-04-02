@@ -4,7 +4,7 @@ from sisters.parameters import Parameter, ParameterSet
 
 class Likelihood(ParameterSet):
 
-    def lnp_samples(self, chain):
+    def lnp_of_samples(self, chain):
         """Get the log-prior-probability for samples from the chain.  This is given
         by the prior probability for the nominally fixed parameters that part
         of the chain.
@@ -43,11 +43,25 @@ class Likelihood(ParameterSet):
 
     def likelihood(self, theta, chains):
         self.value = theta
+        lnp = 0.
         for chain in chains:            
             lnp_chain = self.integrate_chain(chain)
             lnp += lnp_chain
 
-        return lnp_chain
+        return lnp_chain + self.lnp_prior
+
+
+class MixtureLikelihood(ParameterSet):
+
+    def likelihood(self, theta, chains):
+        self.value = theta
+        lnp = 0.
+        for chain in chains:
+            lnp_chain = ((1-self.params['pout']) * self.params['cluster'].integrate_chain(chain) +
+                         self.params['pout'] * self.params['background'].integrate_chain(chain))
+            lnp += lnp_chain
+
+        return lnp_chain + self.lnp_prior
 
 
 if __name__ == "__main__":
@@ -62,8 +76,8 @@ if __name__ == "__main__":
         parlist += [sample, mu, sigma]
 
     mass = Parameter('mass', prior=PowerLawPrior(['gamma_imf']))
-    gamma = Parameter('gamma_imf')
-    gamma.free = False
+    gamma = Parameter('gamma_imf', free=False)
+    gamma.value = -2.35
 
     parlist += [mass, gamma])
-    model = ParameterSet(parlist)
+    model = Likelihood(parlist)
