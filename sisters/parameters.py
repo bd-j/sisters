@@ -42,7 +42,14 @@ class Parameter(object):
             print("Warning: setting fixed parameter {}".format(self.name))
 
     @property
-    def pardict(self):
+    def free_names(self):
+        if self.free:
+            return [self.name]
+        else:
+            return []
+            
+    @property
+    def params(self):
         return dict([(self.name, self.value)])
 
     def prior_prob(self, **kwargs):
@@ -74,15 +81,6 @@ class ParameterSet(Parameter):
     def __repr__(self):
         return '{}({})'.format(self.__class__, self.name)
 
-    def make_fixed(self, pname):
-        self.params[pname].free = False
-
-    def make_free(self, pname):
-        self.params[pname].free = True
-
-    def remove(self, pname):
-        pass
-
     def update(self, **params):
         """Update named parameters based on supplied keyword arguments.
         Needs to be fast.
@@ -99,7 +97,8 @@ class ParameterSet(Parameter):
 
     @property
     def value(self):
-        """A vector of the current values for the free parameters.
+        """A vector of the current values for the free parameters, including
+        lower-level parameters by recursion.
         """
         return np.concatenate([p.value for p in self.free_params])
 
@@ -121,13 +120,20 @@ class ParameterSet(Parameter):
         return [p for p in self._paramlist if p.free]
 
     @property
-    def theta_names(self):
-        """A list of the names of the free parameters.
+    def free_names(self):
+        """A list of the names of the free parameters, including lower-level
+        parameters by recursion.
         """
-        return [p.name for p in self.free_params]
+        n = []
+        for p in self.free_params:
+            n += p.theta_names
+        return n
 
     @property
     def parnames(self):
+        """A list of the name of the parameters in this set.  Does not move
+        recursively down into parameters.
+        """
         return [p.name for p in self._paramlist]
 
     @property
@@ -137,9 +143,3 @@ class ParameterSet(Parameter):
     @property
     def ndim(self):
         return len(self.value)
-
-    @property
-    def pardict(self):
-        d = {}
-        [d.update(p.pardict) for p in self.params]
-        return d
