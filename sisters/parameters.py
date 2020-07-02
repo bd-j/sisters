@@ -23,7 +23,7 @@ class Parameter(object):
         self.value = initial
             
     def __repr__(self):
-        return '{}({})'.format(self.__class__, self.name)
+        return '{}({}={})'.format(self.__class__, self.name, self.value)
 
     def __len__(self):
         try:
@@ -90,7 +90,7 @@ class ParameterSet(Parameter):
             self.params[p].value = v
 
     def __getitem__(self, k):
-        return self.params[k].value
+        return self.params[k]
 
     def __setitem__(self, k, v):
         self.params[k].value = v
@@ -124,10 +124,10 @@ class ParameterSet(Parameter):
         """A list of the names of the free parameters, including lower-level
         parameters by recursion.
         """
-        n = []
+        names = []
         for p in self.free_params:
-            n += p.theta_names
-        return n
+            names += ['{}/{}'.format(self.name, n) for n in p.free_names]
+        return names
 
     @property
     def parnames(self):

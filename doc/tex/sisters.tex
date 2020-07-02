@@ -1,4 +1,5 @@
-\documentclass[manuscript, letterpaper]{aastex6}
+\documentclass[modern]{aastex6} 
+\setlength{\parskip}{\baselineskip}
 \bibliographystyle{aasjournal}
 
 \usepackage{graphicx}
@@ -8,7 +9,7 @@
 \usepackage{url}
 \usepackage{xspace}
 
-\newcommand{\given}
+\newcommand{\given}{\,|\,}
 \newcommand{\like}{\mathcal{L}}
 \newcommand{\transpose}[1]{{#1}^{\!\mathsf T}}
 \renewcommand{\det}[1]{||{#1}||}
@@ -42,7 +43,7 @@ It also is flexible enough to be extended to complex hyper-prior distributions
 
 
 \section{Introduction}
-Discuss \match, \base9, \tausq 
+%Discuss \match, \base9, \tausq 
 
 \section{Model}
 We seek to infer the parameters of a model for the age, distance, etc. distribution of stars in a cluster, using samples of the posterior distr for the individual stars.
@@ -54,14 +55,14 @@ We are going to marginalize out the individual stellar parameters $\theta$.
 In brief, the likelihood can be written
 
 \begin{eqnarray}
-p_i(d_i \given \phi) & = & \int d\theta \, \like(d_i | \theta) \, p(\theta \given \phi) \\
- & \approx & \sum_j p(\hat{\theta}_{i,j} \given \phi) / g(\hat{\theta_{i,j}})
+p_i(S_i, \pi_i \given \psi) & = & \int d\phi \, \like(d_i | \phi) \, p(\phi \given \psi) \\
+ & \approx & \sum_j^J \frac{p(\hat{\phi}_{i,j} \given \psi)}{g(\hat{\phi}_{i,j})}
 \end{eqnarray}
 where $d_i$ are the data for star $i$,
-$\phi$ are the hyperparameters describing the cluster or ensemble of stars,
-$\theta$ are the parameters for the individual star,
-$\hat{theta}$ are the provided samples from the posterior PDF $p(\theta \given d_i)$,
-and $g(\theta)$ is the prior used when obtaining the samples $\hat{theta}$.
+$\psi$ are the hyperparameters describing the cluster or ensemble of stars,
+$\phi$ are the parameters for the individual star,
+$\hat{\phi}_{i,j}$ are the provided samples from the posterior PDF $p(\theta \given d_i)$,
+and $g(\phi)$ is the prior used when obtaining the samples $\hat{\phi}$.
 Note that the second line has replaced the integral with a sum over the values of the prior at the the samples.
 This is the approximate numerical integration enabled by MCMC chains.
 If there is any (even an implicit) prior $g(\theta)$ that was used in the inference of the individual stellar parameters, 
@@ -72,9 +73,10 @@ It is also impossible to do the numeric integral over places where the chains $\
 
 To combine the constraints from all the individual stars we simply take the product of the probabilities of each star under the new prior, and muliply by the hyperprior $p(\phi)$
 \begin{eqnarray}
-p(\phi \given D) & \propto & p(\phi) \, \prod_i p_i(d_i \given \phi)
+p(\psi \given D) & \propto & p(\psi) \, \prod_i p_i(S_i, \pi_i \given \phi) \\
+ & \propto & p(\psi) \, \prod_i \sum_j^J \frac{p(\hat{\phi}_{i,j} \given \psi)}{g(\hat{\phi}_{i,j})}
 \end{eqnarray}
-where $D \equiv {d_i}$ is the set of observations of all stars
+where $D \equiv \{d_i\}$ is the set of observations of all stars
 
 \section{Simple Case}
 In the simplest case the parameters $\phi$ might describe (narrow) gaussians in age, distance, and metallicity.
