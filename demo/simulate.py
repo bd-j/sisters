@@ -3,7 +3,7 @@ import numpy as np
 
 from scipy.stats import norm, genlogistic, logistic, genhalflogistic
 
-from sisters.model import GaussianPriorND, lnpostfn
+from kith.model import GaussianPriorND, lnpostfn
 from emcee import EnsembleSampler
 
 gaussian = norm

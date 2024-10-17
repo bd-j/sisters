@@ -1,4 +1,4 @@
-sisters
+kith
 =====
 
 Given samples from N distributions p<sub>n</sub>(t, m, z, d, a) corresponding to N stars that are members of a cluster, infer parameters of the hyper-prior p(T, Z, D) that describes the cluster age, metallicity, distance, and intrinsic distributions thereof.  This involves a marginalization over mass(m) and attenuation(a).

@@ -1,8 +1,8 @@
 import sys, os, glob
 import numpy as np
 
-from sisters.model import GaussianPriorND, lnpostfn
-from sisters.io import load_stars
+from kith.model import GaussianPriorND, lnpostfn
+from kith.io import load_stars
 
 from emcee import EnsembleSampler
 
