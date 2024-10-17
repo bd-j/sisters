@@ -13,11 +13,11 @@ except ImportError:
     setup
 
 setup(
-    name="sisters",
+    name="kith",
     version='0.1',
     author="Ben Johnson",
     author_email="benjamin.johnson@cfa.harvard.edu",
-    packages=["sisters"],
+    packages=["kith"],
     url="",
     #license="LICENSE",
     description="Heirarchical CMD modeling",
